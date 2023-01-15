@@ -1,10 +1,11 @@
 
 use axum::{
+    extract::Path,
     routing::get,
+    Json,
     Router,
-    extract::Path
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// This is basicallty the simplest example:
 #[tokio::main]
@@ -43,14 +44,24 @@ async fn hello_name_and_number(Path((id, n)): Path<(String, u32)>) -> String {
 /// NB dont double-parenthesis on param, the inner ones are for the tuple
 /// This is cheating a bit as we've "struct'd" the call on the function
 /// Fair, the "struct-ing" from Path is not critical and not strictly necessary or convenient
-async fn hello_with_struct(Path(NameNumber{name, number}): Path<NameNumber>) -> String {
-    format!("Hello struct {name} {number}")
+async fn hello_with_struct(Path((id, n)): Path<(String, u32)>) -> Json<NameNumber >{
+
+    let x = if n % 2 == 0 {
+        Some(String::from("Even number provided"))
+    } else {
+        None
+    };
+    Json(NameNumber{ name: id, number: n, description: x })
 }
 
 
 /// Simple struct - can we map into path-params 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct NameNumber {
     name: String,
-    number: u32
+    number: u32,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>
 }
+
