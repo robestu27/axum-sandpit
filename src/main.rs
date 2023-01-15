@@ -4,7 +4,7 @@ use axum::{
     Router,
     extract::Path
 };
-
+use serde::Deserialize;
 
 /// This is basicallty the simplest example:
 #[tokio::main]
@@ -14,6 +14,7 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route("/hello/:name", get(hello_name))
         .route("/hello/:name/:id", get(hello_name_and_number))
+        .route("/hello-struct/:name/:number", get(hello_with_struct))
         ;
 
     // run it with hyper on localhost:3000
@@ -35,4 +36,21 @@ async fn hello_name(Path(id): Path<String>) -> String {
 async fn hello_name_and_number(Path((id, n)): Path<(String, u32)>) -> String {
     println!("I got {id}/{n}");
     format!("Hello {id}, the number you supplied was {n}")
+}
+
+
+/// Simple param take iii - take 2 parameters mapped from same URL 
+/// NB dont double-parenthesis on param, the inner ones are for the tuple
+/// This is cheating a bit as we've "struct'd" the call on the function
+/// Fair, the "struct-ing" from Path is not critical and not strictly necessary or convenient
+async fn hello_with_struct(Path(NameNumber{name, number}): Path<NameNumber>) -> String {
+    format!("Hello struct {name} {number}")
+}
+
+
+/// Simple struct - can we map into path-params 
+#[derive(Deserialize, Debug)]
+pub struct NameNumber {
+    name: String,
+    number: u32
 }

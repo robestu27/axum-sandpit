@@ -24,3 +24,7 @@ In no particular order:
 (Tokio, Tower and async)
 
 Rust async functions de-sugar into futures.
+
+[https://serde.rs/](Serde book)
+
+
