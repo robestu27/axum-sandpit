@@ -10,3 +10,6 @@ axum = "0.6.2"
 
 #
 tokio = {version="1.24.1", features = ["full"] }
+
+# Serde needed for de-ser and derive of path params
+serde = { version = "1.0.152", features=["derive"] }
