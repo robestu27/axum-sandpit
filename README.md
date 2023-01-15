@@ -8,11 +8,11 @@ In no particular order:
 
 - [x] path params
 - [x] response with JSON (with param based input) -- correct mime type
-- [ ] peceive a struct and de-serialize it (POST body)
+- [x] serve static files
 - [ ] use some form of app state in handler .. like a cache etc
+- [ ] peceive a struct and de-serialize it (POST body)
 - [ ] errors on de-serialize
 - [ ] Option?? in Params and structs
-- [ ] serve static files
 - [ ] read / add headers
 - [ ] cookies 
 - [ ] TLS / HTTPS
@@ -37,11 +37,26 @@ pub struct Json<T>(pub T);
 
 Duh! - all explained in "The Book" -- known as a _tuple struct_.
 
+## Static Files
+
+There is an axum-extras crate that provides the `SpaRouter` struct which would seem to work in most cases.
+
+https://github.com/tokio-rs/axum/tree/main/examples/static-file-server
+
+MNB: is you do not use the SpaRouter (e.g. "merge" into main router) - get compile error as could not infer the type (?)
+
 # Learning
 
 (Tokio, Tower and async)
 
-Rust async functions de-sugar into futures.
+Rust async functions de-sugar into futures.  This is why when you define a handler using an async function, the
+`get` method accepts a `Handler`.  Handler is implemented for `Future`'  The syntax includes use of super-traits:
+
+```rust
+pub trait Handler<T, S, B = Body>: Clone + Send + Sized + 'static { /*...*/ }
+```
+
+So Handler must also implement Cone, Send, Sized and lifetime `static.
 
 ## Serde
 

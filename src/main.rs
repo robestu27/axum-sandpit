@@ -5,13 +5,21 @@ use axum::{
     Json,
     Router,
 };
+
+use axum_extra::routing::SpaRouter;
+
 use serde::{Deserialize, Serialize};
 
 /// This is basicallty the simplest example:
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
+
+    // Define router for static content - would prbably 
+    let spa = SpaRouter::new("/static", "assets");
+
+    // build our application 
     let app = Router::new()
+        .merge(spa)
         .route("/", get(|| async { "Hello, World!" }))
         .route("/hello/:name", get(hello_name))
         .route("/hello/:name/:id", get(hello_name_and_number))
